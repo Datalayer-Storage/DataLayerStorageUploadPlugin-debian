@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Get a list of all the users
+ALL_USERS=$(cut -d: -f1 /etc/passwd)
+
+echo "Please select the user you want to run this script as:"
+select USER in $ALL_USERS; do
+  if [ -n "$USER" ]; then
+    echo "You have selected user: $USER"
+    break
+  else
+    echo "Invalid selection"
+  fi
+done
+
+if [ ! -f /home/$USER/.chia/mainnet/config/config.yaml ]; then
+  echo "Error: Chia is not installed for this user. Please install Chia and try again."
+  exit 1
+fi
+
+echo "Welcome to datalayer-storage-uploader, a plugin for the Chia DataLayer!"
+echo "By using this plugin, your datalayer files will automatically be uploaded and hosted on https://datalayer.storage"
+echo "CLIENT_ACCESS_KEY and CLIENT_SECRET_ACCESS_KEY are needed to use this software."
+echo "You can generate them after creating an account at https://datalayer.storage"
+
+read -p 'Please enter your CLIENT_ACCESS_KEY: ' client_access_key
+read -p 'Please enter your CLIENT_SECRET_ACCESS_KEY: ' client_secret_access_key
+
+if [ -z "$client_access_key" ] || [ -z "$client_secret_access_key" ]; then
+  echo 'Both CLIENT_ACCESS_KEY and CLIENT_SECRET_ACCESS_KEY must be provided. Please try installing again.'
+  exit 1
+fi
+
+mkdir -p /home/$USER/.dlaas
+cat > /home/$USER/.dlaas/config.yaml <<EOF
+CLIENT_ACCESS_KEY: $client_access_key
+CLIENT_SECRET_ACCESS_KEY: $client_secret_access_key
+RPC_HOST: localhost
+RPC_WALLET_PORT: 9256
+RPC_DATALAYER_PORT: 8562
+PORT: 41410
+EOF
+
+if command -v python3 &>/dev/null; then
+  sudo -E -u $USER python3 /opt/datalayer-storage-uploader/update_config.py /home/$USER
+  echo 'Chia must be restarted to use this plugin.'
+else
+  echo 'Python 3 is not installed on your system.'
+  echo 'Unfortunately, we cann  ot automatically update the Chia configuration to use the plugin.'
+  echo 'To manually update the configuration:'
+  echo '1. Open the Chia configuration file located at /home/$USER/.chia/mainnet/config/config.yaml.'
+  echo '2. Add the following entry under data_layer.uploaders:'
+  echo '   - http://localhost:41410'
+  echo '3. Save the file and restart Chia.'
+fi

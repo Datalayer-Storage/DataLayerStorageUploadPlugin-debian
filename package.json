@@ -1,0 +1,35 @@
+{
+  "name": "dl-upload-plugin",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "bin": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare-binary": "rm -rf dist && mkdir dist",
+    "create-win-x64-dist": "npm run prepare-binary && pkg package.json -t node16-win-x64 --out-path dist/win_64",
+    "create-mac-x64-dist": "npm run prepare-binary && pkg package.json -t node16-macos-x64 --out-path dist/osx",
+    "create-linux-x64-dist": "npm run prepare-binary && pkg package.json -t node16-linux-x64 --out-path dist/linux_x64",
+    "create-linux-arm64-dist": "npm run prepare-binary && pkg package.json -t node16-linux-arm64 --out-path dist/linux_arm64",
+    "create-win-x64-config-updatedist": "npm run prepare-binary && pkg package.json -t node16-win-x64 --out-path dist/win_64"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
+    "superagent": "^8.0.9",
+    "winston": "^3.9.0",
+    "winston-daily-rotate-file": "^4.7.1"
+  },
+  "pkg": {
+    "scripts": "package.json",
+    "assets": "package.json"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.1"
+  }
+}

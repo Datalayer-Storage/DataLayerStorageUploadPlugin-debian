@@ -1,0 +1,8 @@
+{
+  "CLIENT_ACCESS_KEY": "",
+  "CLIENT_SECRET_ACCESS_KEY": "",
+  "RPC_HOST": "localhost",
+  "RPC_WALLET_PORT": "9256",
+  "RPC_DATALAYER_PORT": "8562",
+  "PORT": 41410
+}
